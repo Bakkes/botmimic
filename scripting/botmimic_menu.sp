@@ -337,6 +337,12 @@ DisplayRecordMenu(client)
 	new Handle:hRecordList = BotMimic_GetLoadedRecordList();
 	
 	new iSize = GetArraySize(hRecordList);
+	
+	if(iSize > 1) 
+	{
+		AddMenuItem(hMenu, "random", "Playback random");
+	}
+	
 	decl String:sPath[PLATFORM_MAX_PATH], String:sBuffer[MAX_RECORD_NAME_LENGTH+24], String:sCategory[64];
 	new iFileHeader[BMFileHeader], iPlaying;
 	for(new i=0;i<iSize;i++)
@@ -410,6 +416,17 @@ public Menu_SelectRecord(Handle:menu, MenuAction:action, param1, param2)
 			g_bPlayerRecordingFromMenu[param1] = true;
 			BotMimic_StartRecording(param1, sTempName, g_sPlayerSelectedCategory[param1]);
 			DisplayRecordInProgressMenu(param1);
+		}
+		else if(StrEqual(info, "random"))
+		{
+			new Handle:hRecordList = BotMimic_GetLoadedRecordList();
+			decl String:random_item[MAX_RECORD_NAME_LENGTH];
+			GetArrayString(hRecordList, GetRandomInt(0, GetArraySize(hRecordList)), random_item, sizeof(random_item));
+			
+			
+			strcopy(g_sPlayerSelectedRecord[param1], PLATFORM_MAX_PATH, random_item);
+			DisplayRecordDetailMenu(param1);
+			PrintToChat(param1, "Random");
 		}
 		else
 		{
